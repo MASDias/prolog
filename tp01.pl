@@ -7,6 +7,14 @@ carregar_ficheiro:-consult("bicicletas.pl").
 
 %2)gerar_elemento().
 
+novo:-
+                componente(X,Y,_),
+                (
+                    (\+ elemento(X),assertz(elemento(X)));
+                    (\+ elemento(Y),assertz(elemento(Y)))
+                ),
+                fail;true.
+
 gerar_elemento:-
                 findall(X,(componente(X,_,_);componente(_,X,_)),LR),
                 sort(LR, LR2),
