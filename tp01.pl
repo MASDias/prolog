@@ -31,3 +31,13 @@ produto_final(X):-
 produto_base(X):-
                 elemento(X),
                 \+componente(X,_,_).
+
+%Escreva o predicado produto_intermedio(Elemento) que permite pesquisar elementos que
+%entram na composição de outros e que são formados por outros elementos
+
+produto_intermedio(X):-
+                elemento(X),
+                \+ produto_base(X),
+                \+ produto_final(X).
+
+                
