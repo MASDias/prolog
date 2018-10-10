@@ -19,4 +19,9 @@ gerar_elemento([H|T]):-
                 assertz(elemento(H)),
                 gerar_elemento(T).
                    
-                
+%3)Escreva o predicado produto_final(Elemento) que permite pesquisar elementos que não entram
+%  na composição de outros.
+
+produto_final(X):- 
+                elemento(X),
+                \+ componente(_,X,_).
