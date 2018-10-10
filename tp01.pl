@@ -3,11 +3,20 @@
 :-dynamic(componente/2).
 %1) Carregue para memória a BC definida no ficheiro bicicletas.txt, que contém informação sobre a
 %   especificação dos diferentes componentes de uma bicicleta.
-carregar_ficheiro():-consult("biciletas.txt").
+carregar_ficheiro:-consult("bicicletas.pl").
 
 %2)gerar_elemento().
-/*
-gerar_elemento(LR):-setof(P,(X^componente(P,X,_)),LR1),
-                    setof(Y,(L^componente(L,Y,_)),LR2),
-                    append(LR1,LR2,LR).
-                */
+
+gerar_elemento:-
+                findall(X,(componente(X,_,_);componente(_,X,_)),LR),
+                sort(LR, LR2),
+                gerar_elemento(LR2).     
+
+
+gerar_elemento([]).
+
+gerar_elemento([H|T]):-
+                assertz(elemento(H)),
+                gerar_elemento(T).
+                   
+                
