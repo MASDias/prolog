@@ -25,3 +25,9 @@ gerar_elemento([H|T]):-
 produto_final(X):- 
                 elemento(X),
                 \+ componente(_,X,_).
+
+%4)Escreva o predicado produto_base(Elemento) que permite pesquisar elementos que apenas
+%   entram na composição de outros. 
+produto_base(X):-
+                elemento(X),
+                \+componente(X,_,_).
