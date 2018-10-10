@@ -40,4 +40,11 @@ produto_intermedio(X):-
                 \+ produto_base(X),
                 \+ produto_final(X).
 
-                
+
+%8) Escreva o predicado reg_custo(Elemento,Custo)que permite criar um facto (dinâmico) com o custo  de  um  componente,  no  caso de  
+% já  existir  um  custo  para  esse  componente  deve  ser Assim, a  chamada  do  predicado reg_custo(pedal,  32)
+% deve  dar  origem  àcriação  do facto custo(pedal, 32) ou à sua atualização
+
+reg_custo(E,C):- retract(custo(E,C)),fail.
+
+reg_custo(E,C):- asserta(custo(E,C)).
