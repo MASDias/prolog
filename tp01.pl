@@ -47,6 +47,17 @@ diferenca_niveis(Y,W,C,N):-
                             C1 is C+1,
                             diferenca_niveis(Y,X,C1,N).
 
+%7) Escreva   o   predicadodois_mais_profundos(ElementoRaiz,(EMax1,Prof1),(EMax2,Prof2))que  permite  
+%determinar  os  dois  elementos,  e  respectivas  profundidades,  que  estão  a  maior profundidade 
+%na árvore de produto ElementoRaiz.
+
+dois_mais_profundos(ElementoRaiz,(EMax1,Prof1),(EMax2,Prof2)):-
+                            findall((N,E),(nivel(ElementoRaiz,E,N)),L),
+                            sort(L,L2),
+                            append(_,[(Prof1,EMax1),(Prof2,EMax2)],L2),
+                            !.
+
+
 
 %8) Escreva o predicado reg_custo(Elemento,Custo)que permite criar um facto (dinâmico) com o custo  de  um  componente,  no  caso de  
 % já  existir  um  custo  para  esse  componente  deve  ser Assim, a  chamada  do  predicado reg_custo(pedal,  32)
