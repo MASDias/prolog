@@ -80,8 +80,8 @@ calc_custo_peca([(X,Q)|T],V,L):-
                                 custo(X,C),
                                 !,
                                 P is (C*Q),                             
-                                calc_custo_peca(T,V2,L),
-                                V is V2 + P. 
+                                calc_custo_peca(T,V2,L),((custo(X,Vs), V is Vs); 
+                                V is V2 + P). 
 
 calc_custo_peca([(X,Q)|T],V,L):-
                                 \+ custo(X,_),
@@ -90,5 +90,20 @@ calc_custo_peca([(X,Q)|T],V,L):-
                                 V is (V2*Q) + V3,
                                 append([X],L2,L4),
                                 append(L3,L4,L).
-                                
-                                
+
+%10) Escreva o predicado lista_materiais(Elemento,Qtd) que permite listar os produtos base e
+%    respectivas quantidades e custos envolvidos na produção de uma Qtd de Elemento por ordem
+%    decrescente de custo. A estrutura da listagem deverá ser:                              
+
+%13) Escreva o predicado guardarBaseConhecimento(Nome) que permite guardar a base de
+%  conhecimento num ficheiro de texto (incluindo os predicados criados dinamicamente). 
+
+ 
+guardarBaseConhecimento(Nome) :-      
+                            
+                            tell(Nome),      /* open this file */ 
+                                listing(elemento/1),
+                                listing(custo/2),
+                                listing(componente/2), 
+                            told.             /* close ToFile */ 
+
