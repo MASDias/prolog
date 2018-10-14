@@ -91,4 +91,41 @@ calc_custo_peca([(X,Q)|T],V,L):-
                                 append([X],L2,L4),
                                 append(L3,L4,L).
                                 
-                                
+                
+%10)Escreva o predicado lista_materiais(Elemento,Qtd) que permite listar os produtos base e
+%   respectivas quantidades e custos envolvidos na produção de uma Qtd de Elemento por ordem
+%   decrescente de custo.
+lista_materiais(E,Q):-lista_materiais(E,Q,L),
+                    sort(L,L2),
+                    reverse(L2,L3),
+                    write(L3).
+
+lista_materiais(E,Q,L):-findall((X,QX),componente(E,X,QX),L2),
+                        encontrar_materiais(L2,Q,L).
+
+encontrar_materiais([],0,[]).
+
+encontrar_materiais([(X,Q2)|T],Q,L):-
+                                    (produto_base(X),
+                                    custo(X,C)),
+                                    Q3 is (Q*Q2),
+                                    encontrar_materiais(T,Q,L2),                                   
+                                    append([(C,X,Q3)],L,L2)).
+
+encontrar_materiais([(X,Q2)|T],Q,L):-
+                                    (produto_base(X),
+                                    \+custo(X,_)),
+                                    Q3 is (Q*Q2),
+                                    encontrar_materiais(T,Q,L2),                                   
+                                    append([(0,X,Q3)],L,L2)).
+
+encontrar_materiais([(X,_)|T],Q,L):-
+                                    \+produto_base(X),
+                                    lista_materiais(X,Q,L2),
+                                    encontrar_materiais(T,Q,L3),
+                                    append(L2,L3,L).
+                                    
+
+
+    
+    
