@@ -110,14 +110,14 @@ encontrar_materiais([(X,Q2)|T],Q,L):-
                                     custo(X,C)),
                                     Q3 is (Q*Q2),
                                     encontrar_materiais(T,Q,L2),                                   
-                                    append([(C,X,Q3)],L,L2)).
+                                    append([(C,X,Q3)],L,L2).
 
 encontrar_materiais([(X,Q2)|T],Q,L):-
                                     (produto_base(X),
                                     \+custo(X,_)),
                                     Q3 is (Q*Q2),
                                     encontrar_materiais(T,Q,L2),                                   
-                                    append([(0,X,Q3)],L,L2)).
+                                    append([(0,X,Q3)],L,L2).
 
 encontrar_materiais([(X,_)|T],Q,L):-
                                     \+produto_base(X),
@@ -125,16 +125,29 @@ encontrar_materiais([(X,_)|T],Q,L):-
                                     encontrar_materiais(T,Q,L3),
                                     append(L2,L3,L).
 
+%11)Escreva o predicado produto_arvore(Elemento,Arvore) que permite construir uma estrutura
+%   com a árvore de produto a partir de do Elemento.
+
+produto_arvore(Elemento,Arvore):- produto_base(Elemento), 
+                                append([Elemento], Arvore).
+produto_arvore(Elemento, Arvore):-
+              findall((X,Y),(componente(Elemento,X,_),findall(C, componente(X,C,_), Y)),A),
+              append([Elemento],A, Arvore).
+
+%12)Escreva o predicado listar_arvore_identada(Elemento,Op_pi,Op_pb,Op_qtd) que permite
+%   listar de forma indentada (tipo estrutura de diretórios) a árvore de produto do Elemento; Op_pi
+%   define se são apresentados os produtos intermédios (on/off); Op_pb define se são apresentados
+%   os produtos base (on/off); Op_qtd define se são apresentados as quantidades (on/off) 
+
 %13) Escreva o predicado guardarBaseConhecimento(Nome) que permite guardar a base de
 %    conhecimento num ficheiro de texto (incluindo os predicados criados dinamicamente)
                       
 guardarBaseConhecimento(Nome) :-      
-                            
-                            tell(Nome),      /* open this file */ 
+                            tell(Nome),       
                                 listing(elemento/1),
                                 listing(custo/2),
                                 listing(componente/3), 
-                            told.             /* close ToFile */                
+                            told.                            
 
 
     
