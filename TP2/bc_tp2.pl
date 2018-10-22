@@ -104,20 +104,50 @@ bnb2(Dest, [(Ca,LA)|Outros], Cam, Custo):-
 
 
 
+make2Origin(Origem,[H|_],Result,Custo):-
+								dist_cities(H, Origem, CustoX),
+								Custo is CustoX + Result.
 
 tsp1(Orig, Cam, Custo):- 
 	tsp2(Orig, [(0,[Orig])], Cam, Custo, 1).
 
-tsp2(_, [(Custo,[Lol|T])|_], Cam, Custo, 5):- 
-	reverse([Lol|T], Cam).
+tsp2(Orig, [(Result,[Lol|T])|_], Cam, Custo, 5):- 
+			reverse([Lol|T], Cam),
+			make2Origin(Orig,[Lol|T],Result,Custo).
+			
+tsp2(Dest, [(Ca,LA)|Outros], Cam, Custo, _):-
+					LA = [Act|_],
+					findall((CaX,[X|LA]),( dist_cities(Act, X, CustoX),\+ member(X,LA), CaX is CustoX + Ca), Novos),
+					append(Outros, Novos, Todos),
+					sort(Todos, TodosOrd),
+					length(TodosOrd, NewSize),
+					tsp2(Dest, TodosOrd, Cam, Custo, NewSize).
 
-tsp2(Dest, [(Ca,LA)|Outros], Cam, Custo, N):-
-	LA = [Act|_],
-	findall((CaX,[X|LA]),( dist_cities(Act, X, CustoX),\+ member(X,LA), CaX is CustoX + Ca), Novos),
-	append(Outros, Novos, Todos),
-	sort(Todos, TodosOrd),
-	calcularTamanho(TodosOrd,N),
-	tsp2(Dest, TodosOrd, Cam, Custo, N).
 
 
-calcularTamanho([(_,L)|_], N):-write(L),length(L, N).
+calcular_total_cidades(N):- findall(Nome, city(Nome,_,_), Cidades),
+							length(Cidades, N).
+
+tsp3(Orig, Cam, Custo):-
+						calcular_total_cidades(NCidades),
+						findall((CustoX,Caminho),
+							(bnb1(Orig,_,Caminho,CustoX), length(Caminho,Nx), Nx =:=NCidades),
+							BNBPaths),
+						calcular_caminhos_com_origem(Orig,BNBPaths,NewPath),
+						sort(NewPath,Ordenados),
+						melhor_caminho(Ordenados,Cam,Custo).
+
+melhor_caminho([(Custo,Caminho)|_],Caminho,Custo).
+
+calcular_caminhos_com_origem(_,[],[]). 
+
+calcular_caminhos_com_origem(Origem,[(Custo,Caminho)|T],NovoCam):- 
+						last(Caminho,Ultimo),
+						dist_cities(Ultimo,Origem,UltimaDistancia),
+						Resultado is Custo + UltimaDistancia,
+						calcular_caminhos_com_origem(Origem,T,Caminho2),
+						append(Caminho,Origem,CaminhoTemporario),
+						append([(Resultado,CaminhoTemporario)],Caminho2,NovoCam).
+
+						
+						
