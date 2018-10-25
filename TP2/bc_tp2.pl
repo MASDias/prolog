@@ -11,9 +11,9 @@ city(tirana,41.33165,19.8318).
 city(andorra,42.5075025,1.5218033).
 city(vienna,48.2092062,16.3727778).
 city(minsk,53.905117,27.5611845).
-% city(sarajevo,43.85643,18.41342).
-% city(sofia,42.6976246,23.3222924).
-% city(zagreb,45.8150053,15.9785014).
+city(sarajevo,43.85643,18.41342).
+city(sofia,42.6976246,23.3222924).
+city(zagreb,45.8150053,15.9785014).
 % city(nicosia,35.167604,33.373621).
 % city(prague,50.0878114,14.4204598).
 % city(copenhagen,55.6762944,12.5681157).
@@ -101,34 +101,10 @@ bnb2(Dest, [(Ca,LA)|Outros], Cam, Custo):-
 	bnb2(Dest, TodosOrd, Cam, Custo).
 
 
-
-
-
-make2Origin(Origem,[H|_],Result,Custo):-
-								dist_cities(H, Origem, CustoX),
-								Custo is CustoX + Result.
-
-tsp1(Orig, Cam, Custo):- 
-	tsp2(Orig, [(0,[Orig])], Cam, Custo, 1).
-
-tsp2(Orig, [(Result,[Lol|T])|_], Cam, Custo, 5):- 
-			reverse([Lol|T], Cam),
-			make2Origin(Orig,[Lol|T],Result,Custo).
-			
-tsp2(Dest, [(Ca,LA)|Outros], Cam, Custo, _):-
-					LA = [Act|_],
-					findall((CaX,[X|LA]),( dist_cities(Act, X, CustoX),\+ member(X,LA), CaX is CustoX + Ca), Novos),
-					append(Outros, Novos, Todos),
-					sort(Todos, TodosOrd),
-					length(TodosOrd, NewSize),
-					tsp2(Dest, TodosOrd, Cam, Custo, NewSize).
-
-
-
 calcular_total_cidades(N):- findall(Nome, city(Nome,_,_), Cidades),
 							length(Cidades, N).
 
-tsp3(Orig, Cam, Custo):-
+tsp1(Orig, Cam, Custo):-
 						calcular_total_cidades(NCidades),
 						findall((CustoX,Caminho),
 							(bnb1(Orig,_,Caminho,CustoX), length(Caminho,Nx), Nx =:=NCidades),
@@ -149,5 +125,5 @@ calcular_caminhos_com_origem(Origem,[(Custo,Caminho)|T],NovoCam):-
 						append(Caminho,Origem,CaminhoTemporario),
 						append([(Resultado,CaminhoTemporario)],Caminho2,NovoCam).
 
-						
+	
 						
