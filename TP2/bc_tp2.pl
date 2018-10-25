@@ -11,12 +11,12 @@ city(tirana,41.33165,19.8318).
 city(andorra,42.5075025,1.5218033).
 city(vienna,48.2092062,16.3727778).
 city(minsk,53.905117,27.5611845).
-city(sarajevo,43.85643,18.41342).
-city(sofia,42.6976246,23.3222924).
-city(zagreb,45.8150053,15.9785014).
-% city(nicosia,35.167604,33.373621).
-% city(prague,50.0878114,14.4204598).
-% city(copenhagen,55.6762944,12.5681157).
+%city(sarajevo,43.85643,18.41342).
+%city(sofia,42.6976246,23.3222924).
+%city(zagreb,45.8150053,15.9785014).
+%city(nicosia,35.167604,33.373621).
+%city(prague,50.0878114,14.4204598).
+%city(copenhagen,55.6762944,12.5681157).
 % city(london,51.5001524,-0.1262362).
 % city(tallinn,59.4388619,24.7544715).
 % city(helsinki,60.1698791,24.9384078).
@@ -87,7 +87,7 @@ distance(Lat1, Lon1, Lat2, Lon2, Dis2):-
 
 
 %1) tsp1(Origem, Destino, Caminho, Custo).
-bnb1(Orig, Dest, Cam, Custo):- 
+/*bnb1(Orig, Dest, Cam, Custo):- 
 	bnb2(Dest, [(0,[Orig])], Cam, Custo).
 
 bnb2(Dest, [(Custo,[Dest|T])|_], Cam, Custo):- 
@@ -124,6 +124,30 @@ calcular_caminhos_com_origem(Origem,[(Custo,Caminho)|T],NovoCam):-
 						calcular_caminhos_com_origem(Origem,T,Caminho2),
 						append(Caminho,Origem,CaminhoTemporario),
 						append([(Resultado,CaminhoTemporario)],Caminho2,NovoCam).
+*/
+%--------------------------------BEAST MODE-------------------------------------
+tsp(Ini, Cam, Custo):- 
+					findall((CustoX,CamX),(tsp2(Ini,CamX,CustoX)),LSol),
+					sort(LSol, [(Custo,Cam)|_]).
 
-	
-						
+tsp2(Ini, Cam, Custo):-
+					findall(C, city(C,_,_),LC), 
+					select(Ini,LC,LR),
+					tsp(Ini,[Ini],LR,Cam,Custo).
+
+tsp(Ini,[H|T],[],Cam,CustoX):-
+					dist_cities(Ini,H,CustoX),
+					reverse([H|T],Cam).
+
+tsp(Ini,[H|T],LV,Cam,Custo):-
+					select(X,LV,LVR),
+					tsp(Ini,[X,H|T],LVR,Cam,CustoP),
+					dist_cities(X,H,Cx),
+					Custo is CustoP + Cx.
+
+
+
+%2) Implemente	 o	 predicado	 tsp2,	 utilizando	 uma	 heurística	 greedy,	 a	 heurística	 do	
+%	vizinho	mais	próximo (ideia	base:	próxima	cidade	a	ser	visitada	é	a	mais	próxima	que	
+%	ainda	não	foi	visitada.						
+%tsp1(Orig, Cam, Custo)
