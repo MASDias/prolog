@@ -165,8 +165,8 @@ tspAux(Ini,[H|T],[],Cam,CustoX):-
 	reverse([H|T],Cam).
 
 tspAux(Ini,[H|T],LV,Cam,Custo):-
-	findall((CustoC,Nc),(dist_cities(Ini,Nc,CustoC),member(Nc,LV)),LR2),
-	sort(LR2,[(Cx,Melhor)|_]),
+	findall((CustoC,Nc),(member(Nc,LV),dist_cities(H,Nc,CustoC)),LR2),
+	sort(LR2,[(Cx,Melhor)|_]),+
 	select(Melhor,LV,LVR),
 	tspAux(Ini,[Melhor,H|T],LVR,Cam,CustoP),
 	Custo is CustoP + Cx.
