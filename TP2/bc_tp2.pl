@@ -11,7 +11,7 @@ city(tirana,41.33165,19.8318).
 city(andorra,42.5075025,1.5218033).
 city(vienna,48.2092062,16.3727778).
 city(minsk,53.905117,27.5611845).
-city(sarajevo,43.85643,18.41342).
+% city(sarajevo,43.85643,18.41342).
 % city(sofia,42.6976246,23.3222924).
 % city(zagreb,45.8150053,15.9785014).
 % city(nicosia,35.167604,33.373621).
@@ -101,11 +101,9 @@ bnb2(Dest, [(Ca,LA)|Outros], Cam, Custo):-
 	bnb2(Dest, TodosOrd, Cam, Custo).
 */
 
-
-
 % Given three colinear points p, q, r, the function checks if
 % point q lies on line segment 'pr'
-%onSegment(P, Q, R)
+% onSegment(P, Q, R)
 onSegment((PX,PY), (QX,QY), (RX,RY)):-
     QX =< max(PX,RX),
     QX >= min(PX,RX),
@@ -120,14 +118,13 @@ onSegment((PX,PY), (QX,QY), (RX,RY)):-
 % 2 --> Counterclockwise
 
 orientation((PX,PY), (QX,QY), (RX,RY), Orientation):-
-	Val is (QY - PY) * (RX - QX) - (QX - PX) * (RY - QY),
-	
+	Val is (QY - PY) * (RX - QX) - (QX - PX) * (RY - QY),	
 	(
 		Val == 0, !, Orientation is 0;
 		Val >0, !, Orientation is 1;
 		Orientation is 2
 	).
- 
+
 orientation4cases(P1,Q1,P2,Q2,O1,O2,O3,O4):-
     orientation(P1, Q1, P2,O1),
     orientation(P1, Q1, Q2,O2),
@@ -142,7 +139,6 @@ doIntersect(P1,Q1,P2,Q2):-
     % Find the four orientations needed for general and
     % special cases
 	orientation4cases(P1,Q1,P2,Q2,O1,O2,O3,O4),
-	
 	(	
     % General case
     O1 \== O2 , O3 \== O4,!;
@@ -258,7 +254,9 @@ tsp(Ini,[H|T],LV,Cam,Custo):-
 %tsp1(Orig, Cam, Custo)
 tsp2(Ini, Cam, Custo):- 
 	findall((CustoX,CamX),(tsp_3(Ini,CamX,CustoX)),LSol),
-	sort(LSol, [(Custo,Cam)|_]).
+	sort(LSol, [(Custo,CamAux)|_]),
+	append(CamAux, [Ini], Cam).
+
 
 tsp_3(Ini, Cam, Custo):-
 	findall(C, city(C,_,_),LC), 
@@ -278,18 +276,98 @@ tspAux(Ini,[H|T],LV,Cam,Custo):-
 
 
 
-removerCruzamentos(Ini, Cam, Custo,Novo):- 
-								tsp2(Ini, Cam, Custo),
-								refazerCaminho(Cam,Res),
-								reverse(Res,Novo).
+% removerCruzamentos(Ini, Cam, Custo,Novo):- 
+% 								tsp2(Ini, Cam, Custo),
+% 								refazerCaminho(Ini,Cam,Res),
+% 								reverse(Res,Novo).
 
-refazerCaminho(L,_):- length(L, Num).
+% refazerCaminho(_,[],[]).
+% refazerCaminho(Ini,[Ini],[]).
+% refazerCaminho(Ini,[A,B|T],Novo):-
+% 						S = [A,B],
+% 						refazerCaminho(Ini,[B|T],Aux),
+% 						append(Aux, [S], Novo).
 
+tsp3(Ini, Cam, Custo):- 
+						tsp2(Ini, Cam, Custo),
+						refazerCaminho(Ini,Cam,Res),
+						reverse(Res,Novo),
+						removerCruzamentos(Ini,Novo,[],LR),
+						Cam = LR.
 
-refazerCaminho([A,B|T],Novo):-
+refazerCaminho(_,[],[]).
+
+refazerCaminho(Ini,[Ini],[]).
+
+refazerCaminho(Ini,[A,B|T],Novo):-
 						S = [A,B],
-						refazerCaminho([B|T],Res),
-						append(S, Res, Novo).
-						
-						
+						refazerCaminho(Ini,[B|T],Aux),
+						append(Aux, [S], Novo).
 
+removerCruzamentos(_,[],Result,Result).
+
+removerCruzamentos(Ini,[[A,B],[C,D]|T],L,LR):-
+								opt2(Ini,[[A,B],[C,D]|T],[A,B],[[C,D]|T],Result),
+								write('saddas'),
+								rGraph(Ini,Result,LR),
+								removerCruzamentos(Ini,[[C,D]|T], L, LR).
+
+intersecao(A,B,C,D):-	
+					B\==C,
+					city(A,XA,YA),
+					city(B,XB,YB),
+					city(C,XC,YC),
+					city(D,XD,YD),
+					doIntersect((XA,YA),(XB,YB),(XC,YC),(XD,YD)).
+
+custo(A,_,C,D,CustoAC,CustoAD):- 				
+			dist_cities(A,C,CustoAC),		
+			dist_cities(A,D,CustoAD).
+
+% doIntersect(P1,Q1,P2,Q2):
+
+opt2(_,[_],[_,_],[],[_]).
+
+opt2(Ini,Original,[A,B],[[C,D]|T], Result):-
+				(
+					intersecao(A,B,C,D),
+					custo(A,B,C,D,CustoAC,CustoAD),				
+					(
+						CustoAC > CustoAD,
+						Novo = [A,D],
+						Novo2 = [D,B]
+						;
+						Novo = [A,C],
+						Novo2 = [C,B]
+					),
+					nl,
+					write(A),
+					nl,
+					write(B),
+					nl,
+					write(C),
+					nl,
+					write(D),
+					nl,
+					write(Original),
+					nl,
+					select([A,B], Original, Original2),
+					select([C,D], Original2, Original3),
+					append(Original3, [Novo], NovoCaminho),
+					append(NovoCaminho, [Novo2], NovoCaminho2),
+					Result = NovoCaminho2,
+					write(Novo),
+					nl,
+					write(Novo2),
+					nl,
+					nl,
+					write(NovoCaminho2),
+					nl,
+					nl,
+					opt2(Ini,NovoCaminho2,Novo,T,Result)
+
+				)
+				;
+				(
+					opt2(Ini,Original,[A,B],T,Result) 
+				).
