@@ -11,7 +11,7 @@ city(tirana,41.33165,19.8318).
 city(andorra,42.5075025,1.5218033).
 city(vienna,48.2092062,16.3727778).
 city(minsk,53.905117,27.5611845).
-% city(sarajevo,43.85643,18.41342).
+city(sarajevo,43.85643,18.41342).
 % city(sofia,42.6976246,23.3222924).
 % city(zagreb,45.8150053,15.9785014).
 % city(nicosia,35.167604,33.373621).
@@ -289,11 +289,12 @@ tspAux(Ini,[H|T],LV,Cam,Custo):-
 % 						append(Aux, [S], Novo).
 
 tsp3(Ini, Cam, Custo):- 
-						tsp2(Ini, Cam, Custo),
-						refazerCaminho(Ini,Cam,Res),
+						tsp2(Ini, L, Custo),
+						refazerCaminho(Ini,L,Res),
 						reverse(Res,Novo),
 						removerCruzamentos(Ini,Novo,[],LR),
 						Cam = LR.
+
 
 refazerCaminho(_,[],[]).
 
@@ -307,10 +308,9 @@ refazerCaminho(Ini,[A,B|T],Novo):-
 removerCruzamentos(_,[],Result,Result).
 
 removerCruzamentos(Ini,[[A,B],[C,D]|T],L,LR):-
-								opt2(Ini,[[A,B],[C,D]|T],[A,B],[[C,D]|T],Result),
-								write('saddas'),
-								rGraph(Ini,Result,LR),
-								removerCruzamentos(Ini,[[C,D]|T], L, LR).
+								opt2(Ini,[[A,B],[C,D]|T],[A,B],[[C,D]|T],LR).
+								%write("yo"),
+								%removerCruzamentos(Ini,[[C,D]|T], L, LR).
 
 intersecao(A,B,C,D):-	
 					B\==C,
@@ -320,52 +320,19 @@ intersecao(A,B,C,D):-
 					city(D,XD,YD),
 					doIntersect((XA,YA),(XB,YB),(XC,YC),(XD,YD)).
 
-custo(A,_,C,D,CustoAC,CustoAD):- 				
-			dist_cities(A,C,CustoAC),		
-			dist_cities(A,D,CustoAD).
+opt2(_,_,_,[],_).
 
-% doIntersect(P1,Q1,P2,Q2):
-
-opt2(_,[_],[_,_],[],[_]).
-
-opt2(Ini,Original,[A,B],[[C,D]|T], Result):-
+opt2(Ini,Original,[A,B],[[C,D]|T],Result):-
 				(
 					intersecao(A,B,C,D),
-					custo(A,B,C,D,CustoAC,CustoAD),				
-					(
-						CustoAC > CustoAD,
-						Novo = [A,D],
-						Novo2 = [D,B]
-						;
-						Novo = [A,C],
-						Novo2 = [C,B]
-					),
-					nl,
-					write(A),
-					nl,
-					write(B),
-					nl,
-					write(C),
-					nl,
-					write(D),
-					nl,
-					write(Original),
-					nl,
+					Novo = [A,C],
+					Novo2 = [B,D],
 					select([A,B], Original, Original2),
 					select([C,D], Original2, Original3),
 					append(Original3, [Novo], NovoCaminho),
 					append(NovoCaminho, [Novo2], NovoCaminho2),
-					Result = NovoCaminho2,
-					write(Novo),
-					nl,
-					write(Novo2),
-					nl,
-					nl,
-					write(NovoCaminho2),
-					nl,
-					nl,
-					opt2(Ini,NovoCaminho2,Novo,T,Result)
-
+					rGraph(Ini,NovoCaminho2,Result),
+					opt2(Ini,Result,Novo,T,Result)
 				)
 				;
 				(
