@@ -12,50 +12,50 @@ city(andorra,42.5075025,1.5218033).
 city(vienna,48.2092062,16.3727778).
 city(minsk,53.905117,27.5611845).
 city(sarajevo,43.85643,18.41342).
-% city(sofia,42.6976246,23.3222924).
-% city(zagreb,45.8150053,15.9785014).
-% city(nicosia,35.167604,33.373621).
-% city(prague,50.0878114,14.4204598).
-% city(copenhagen,55.6762944,12.5681157).
-% city(london,51.5001524,-0.1262362).
-% city(tallinn,59.4388619,24.7544715).
-% city(helsinki,60.1698791,24.9384078).
-% city(paris,48.8566667,2.3509871).
-% city(marseille,43.296386,5.369954).
-% city(tbilisi,41.709981,44.792998).
-% city(berlin,52.5234051,13.4113999).
-% city(athens,37.97918,23.716647).
-% city(budapest,47.4984056,19.0407578).
-% city(reykjavik,64.135338,-21.89521).
-% city(dublin,53.344104,-6.2674937).
-% city(rome,41.8954656,12.4823243).
-% city(pristina,42.672421,21.164539).
-% city(riga,56.9465346,24.1048525).
-% city(vaduz,47.1410409,9.5214458).
-% city(vilnius,54.6893865,25.2800243).
-% city(luxembourg,49.815273,6.129583).
-% city(skopje,42.003812,21.452246).
-% city(valletta,35.904171,14.518907).
-% city(chisinau,47.026859,28.841551).
-% city(monaco,43.750298,7.412841).
-% city(podgorica,42.442575,19.268646).
-% city(amsterdam,52.3738007,4.8909347).
-% city(belfast,54.5972686,-5.9301088).
-% city(oslo,59.9138204,10.7387413).
-% city(warsaw,52.2296756,21.0122287).
-% city(lisbon,38.7071631,-9.135517).
-% city(bucharest,44.430481,26.12298).
-% city(moscow,55.755786,37.617633).
-% city(san_marino,43.94236,12.457777).
-% city(edinburgh,55.9501755,-3.1875359).
-% city(belgrade,44.802416,20.465601).
-% city(bratislava,48.1483765,17.1073105).
-% city(ljubljana,46.0514263,14.5059655).
-% city(madrid,40.4166909,-3.7003454).
-% city(stockholm,59.3327881,18.0644881).
-% city(bern,46.9479986,7.4481481).
-% city(kiev,50.440951,30.5271814).
-% city(cardiff,51.4813069,-3.1804979).
+city(sofia,42.6976246,23.3222924).
+city(zagreb,45.8150053,15.9785014).
+city(nicosia,35.167604,33.373621).
+city(prague,50.0878114,14.4204598).
+city(copenhagen,55.6762944,12.5681157).
+city(london,51.5001524,-0.1262362).
+city(tallinn,59.4388619,24.7544715).
+city(helsinki,60.1698791,24.9384078).
+city(paris,48.8566667,2.3509871).
+city(marseille,43.296386,5.369954).
+city(tbilisi,41.709981,44.792998).
+city(berlin,52.5234051,13.4113999).
+city(athens,37.97918,23.716647).
+city(budapest,47.4984056,19.0407578).
+city(reykjavik,64.135338,-21.89521).
+city(dublin,53.344104,-6.2674937).
+city(rome,41.8954656,12.4823243).
+city(pristina,42.672421,21.164539).
+city(riga,56.9465346,24.1048525).
+city(vaduz,47.1410409,9.5214458).
+city(vilnius,54.6893865,25.2800243).
+city(luxembourg,49.815273,6.129583).
+city(skopje,42.003812,21.452246).
+city(valletta,35.904171,14.518907).
+city(chisinau,47.026859,28.841551).
+city(monaco,43.750298,7.412841).
+city(podgorica,42.442575,19.268646).
+city(amsterdam,52.3738007,4.8909347).
+city(belfast,54.5972686,-5.9301088).
+city(oslo,59.9138204,10.7387413).
+city(warsaw,52.2296756,21.0122287).
+city(lisbon,38.7071631,-9.135517).
+city(bucharest,44.430481,26.12298).
+city(moscow,55.755786,37.617633).
+city(san_marino,43.94236,12.457777).
+city(edinburgh,55.9501755,-3.1875359).
+city(belgrade,44.802416,20.465601).
+city(bratislava,48.1483765,17.1073105).
+city(ljubljana,46.0514263,14.5059655).
+city(madrid,40.4166909,-3.7003454).
+city(stockholm,59.3327881,18.0644881).
+city(bern,46.9479986,7.4481481).
+city(kiev,50.440951,30.5271814).
+city(cardiff,51.4813069,-3.1804979).
 
 %  dist_cities(brussels,prague,D).
 %  D = 716837.
@@ -289,28 +289,50 @@ tspAux(Ini,[H|T],LV,Cam,Custo):-
 % 						append(Aux, [S], Novo).
 
 tsp3(Ini, Cam, Custo):- 
-						tsp2(Ini, L, Custo),
+						tsp2(Ini, L, _),
 						refazerCaminho(Ini,L,Res),
 						reverse(Res,Novo),
-						removerCruzamentos(Ini,Novo,[],LR),
-						Cam = LR.
+						removerCruzamentos(Ini,Novo,LR),	
+						calcularCusto(LR,Custo),
+						desfazerCaminho(LR,Cam).
+
+calcularCusto([],0).
+calcularCusto([[A,B]|T],Custo):-
+						dist_cities(A,B,CX),
+						calcularCusto(T,Custo2),
+						Custo is Custo2+CX.
 
 
+desfazerCaminho([[A,B]|T],Result):-
+						CIni = [A,B],
+						desfazerCaminho2(T,Result2),
+						reverse(Result2,Aux),
+						append(CIni,Aux,Result).
+
+desfazerCaminho2([],_).
+desfazerCaminho2([[_,A]|T],Result):-
+			desfazerCaminho2(T,Result2),
+			append(Result2,[A],Result).
+			
 refazerCaminho(_,[],[]).
 
-refazerCaminho(Ini,[Ini],[]).
+refazerCaminho(Ini,[Ini],_).
 
 refazerCaminho(Ini,[A,B|T],Novo):-
-						S = [A,B],
-						refazerCaminho(Ini,[B|T],Aux),
-						append(Aux, [S], Novo).
+					S = [A,B],
+					refazerCaminho(Ini,[B|T],Aux),
+					append(Aux, [S], Novo).
 
-removerCruzamentos(_,[],Result,Result).
-
-removerCruzamentos(Ini,[[A,B],[C,D]|T],L,LR):-
-								opt2(Ini,[[A,B],[C,D]|T],[A,B],[[C,D]|T],LR).
-								%write("yo"),
-								%removerCruzamentos(Ini,[[C,D]|T], L, LR).
+removerCruzamentos(Ini,[[A,B],[C,D]|T],LR):-
+					opt2(Ini,[[A,B],[C,D]|T],[[A,B],[C,D]|T],[[C,D]|T],LAux),
+					(
+						(
+							[[A,B],[C,D]|T] \== LAux,	
+							removerCruzamentos(Ini,LAux,LR)
+						)
+						;
+						LR = LAux	
+					).
 
 intersecao(A,B,C,D):-	
 					B\==C,
@@ -320,9 +342,13 @@ intersecao(A,B,C,D):-
 					city(D,XD,YD),
 					doIntersect((XA,YA),(XB,YB),(XC,YC),(XD,YD)).
 
-opt2(_,_,_,[],_).
+opt2(_,Result,[],_,Result).
 
-opt2(Ini,Original,[A,B],[[C,D]|T],Result):-
+opt2(Ini,Original,[_,A|T],[],Cam):-
+    opt2(Ini,Original,[A|T],T,Cam).
+
+
+opt2(Ini,Original,[[A,B]|T1],[[C,D]|T],Result):-
 				(
 					intersecao(A,B,C,D),
 					Novo = [A,C],
@@ -331,10 +357,9 @@ opt2(Ini,Original,[A,B],[[C,D]|T],Result):-
 					select([C,D], Original2, Original3),
 					append(Original3, [Novo], NovoCaminho),
 					append(NovoCaminho, [Novo2], NovoCaminho2),
-					rGraph(Ini,NovoCaminho2,Result),
-					opt2(Ini,Result,Novo,T,Result)
+					rGraph(Ini,NovoCaminho2,Result)
 				)
 				;
 				(
-					opt2(Ini,Original,[A,B],T,Result) 
+					opt2(Ini,Original,[[A,B]|T1],T,Result) 
 				).
