@@ -12,50 +12,50 @@ city(andorra,42.5075025,1.5218033).
 city(vienna,48.2092062,16.3727778).
 city(minsk,53.905117,27.5611845).
 city(sarajevo,43.85643,18.41342).
-% city(sofia,42.6976246,23.3222924).
-% city(zagreb,45.8150053,15.9785014).
-% city(nicosia,35.167604,33.373621).
-% city(prague,50.0878114,14.4204598).
-% city(copenhagen,55.6762944,12.5681157).
-% city(london,51.5001524,-0.1262362).
-% city(tallinn,59.4388619,24.7544715).
-% city(helsinki,60.1698791,24.9384078).
-% city(paris,48.8566667,2.3509871).
-% city(marseille,43.296386,5.369954).
-% city(tbilisi,41.709981,44.792998).
-% city(berlin,52.5234051,13.4113999).
-% city(athens,37.97918,23.716647).
-% city(budapest,47.4984056,19.0407578).
-% city(reykjavik,64.135338,-21.89521).
-% city(dublin,53.344104,-6.2674937).
-% city(rome,41.8954656,12.4823243).
-% city(pristina,42.672421,21.164539).
-% city(riga,56.9465346,24.1048525).
-% city(vaduz,47.1410409,9.5214458).
-% city(vilnius,54.6893865,25.2800243).
-% city(luxembourg,49.815273,6.129583).
-% city(skopje,42.003812,21.452246).
-% city(valletta,35.904171,14.518907).
-% city(chisinau,47.026859,28.841551).
-% city(monaco,43.750298,7.412841).
-% city(podgorica,42.442575,19.268646).
-% city(amsterdam,52.3738007,4.8909347).
-% city(belfast,54.5972686,-5.9301088).
-% city(oslo,59.9138204,10.7387413).
-% city(warsaw,52.2296756,21.0122287).
-% city(lisbon,38.7071631,-9.135517).
-% city(bucharest,44.430481,26.12298).
-% city(moscow,55.755786,37.617633).
-% city(san_marino,43.94236,12.457777).
-% city(edinburgh,55.9501755,-3.1875359).
-% city(belgrade,44.802416,20.465601).
-% city(bratislava,48.1483765,17.1073105).
-% city(ljubljana,46.0514263,14.5059655).
-% city(madrid,40.4166909,-3.7003454).
-% city(stockholm,59.3327881,18.0644881).
-% city(bern,46.9479986,7.4481481).
-% city(kiev,50.440951,30.5271814).
-% city(cardiff,51.4813069,-3.1804979).
+city(sofia,42.6976246,23.3222924).
+city(zagreb,45.8150053,15.9785014).
+city(nicosia,35.167604,33.373621).
+city(prague,50.0878114,14.4204598).
+city(copenhagen,55.6762944,12.5681157).
+city(london,51.5001524,-0.1262362).
+city(tallinn,59.4388619,24.7544715).
+city(helsinki,60.1698791,24.9384078).
+city(paris,48.8566667,2.3509871).
+city(marseille,43.296386,5.369954).
+city(tbilisi,41.709981,44.792998).
+city(berlin,52.5234051,13.4113999).
+city(athens,37.97918,23.716647).
+city(budapest,47.4984056,19.0407578).
+city(reykjavik,64.135338,-21.89521).
+city(dublin,53.344104,-6.2674937).
+city(rome,41.8954656,12.4823243).
+city(pristina,42.672421,21.164539).
+city(riga,56.9465346,24.1048525).
+city(vaduz,47.1410409,9.5214458).
+city(vilnius,54.6893865,25.2800243).
+city(luxembourg,49.815273,6.129583).
+city(skopje,42.003812,21.452246).
+city(valletta,35.904171,14.518907).
+city(chisinau,47.026859,28.841551).
+city(monaco,43.750298,7.412841).
+city(podgorica,42.442575,19.268646).
+city(amsterdam,52.3738007,4.8909347).
+city(belfast,54.5972686,-5.9301088).
+city(oslo,59.9138204,10.7387413).
+city(warsaw,52.2296756,21.0122287).
+city(lisbon,38.7071631,-9.135517).
+city(bucharest,44.430481,26.12298).
+city(moscow,55.755786,37.617633).
+city(san_marino,43.94236,12.457777).
+city(edinburgh,55.9501755,-3.1875359).
+city(belgrade,44.802416,20.465601).
+city(bratislava,48.1483765,17.1073105).
+city(ljubljana,46.0514263,14.5059655).
+city(madrid,40.4166909,-3.7003454).
+city(stockholm,59.3327881,18.0644881).
+city(bern,46.9479986,7.4481481).
+city(kiev,50.440951,30.5271814).
+city(cardiff,51.4813069,-3.1804979).
 
 %  dist_cities(brussels,prague,D).
 %  D = 716837.
@@ -382,12 +382,14 @@ custo([A,B|T], Custo):-
 	custo([B|T],C2),
 	dist_cities(A,B,C1),
 	Custo is C1 + C2.
-
+:-dynamic cities/1.
+:-dynamic best_path/1.
+:-dynamic best_pop/1.
 % parameteriza��o
-geracoes(5).
-populacao(4).
-prob_cruzamento(0.4).
-prob_mutacao(0.5).
+geracoes(50).
+populacao(200).
+prob_cruzamento(0.5).
+prob_mutacao(0.6).
 %cities(6).
 
 
@@ -395,15 +397,25 @@ gerarNumeroCidades:-
 	retractall(cities(_)),
     findall(Cidade,city(Cidade,_,_),ListaCidades),
     length(ListaCidades,N),
-    assert(cities(N))
+    assert(cities(N)).
+
 gera:-
 	gerarNumeroCidades,
-	gerar_populacao(Pop),
-	avalia_populacao(Pop,PopAv), % Avaliacao do custo dos individuos(lista de possiveis caminhos) da populacao
-	ordena_populacao(PopAv,PopOrd), % Apos a avaliacao da populacao faz uma ordenacao à mesma
-	geracoes(NG),
-	gera_geracao(NG,PopOrd).
-
+	(
+		\+ best_pop(_),
+		gerar_populacao(Pop),
+		avalia_populacao(Pop,PopAv), % Avaliacao do custo dos individuos(lista de possiveis caminhos) da populacao
+		ordena_populacao(PopAv,PopOrd), % Apos a avaliacao da populacao faz uma ordenacao à mesma
+		geracoes(NG),
+		gera_geracao(NG,PopOrd)
+	)
+	;
+	(
+		best_pop(BestPop),
+		geracoes(NG),
+		gera_geracao(NG,BestPop)
+	).
+	
 gerar_populacao(Pop):-
 	populacao(TamanhoPopulacao),
 	cities(NumCidades),
@@ -460,18 +472,49 @@ btroca([X*VX,Y*VY|L1],[Y*VY|L2]):-
 
 btroca([X|L1],[X|L2]):-btroca(L1,L2).
 
+atualizar_populacao(_).
+atualizar_populacao(Pop):-
+	\+ best_pop(_),
+	assertz(best_pop(Pop)).
+atualizar_populacao(Pop):-
+	retractall(best_pop(_)),
+	assertz(best_pop(Pop)).
+
 gera_geracao(0,Pop):-!,
-	write('Gera��o '), write(0), write(':'), nl, write(Pop), nl.
+	best_path(Melhor),
+	write('Fim...'),nl, write('Melhor Resultado => '),write(Melhor), nl,
+	atualizar_populacao(Pop).
 
 gera_geracao(G,Pop):-
-	write('Gera��o '), write(G), write(':'), nl, write(Pop), nl,
 	cruzamento(Pop,NovaPopulacao1),
 	mutacao(NovaPopulacao1,NovaPopulacao),
 	avalia_populacao(NovaPopulacao,NovaPopulacaoAvaliada),
 	ordena_populacao(NovaPopulacaoAvaliada,NovaPopulacaoOrd),
+	populacao(NumPopulacao),
+	melhoresResultadosPopulacao(NumPopulacao,NovaPopulacaoOrd,NovaPopulacaoElitista),
+	NovaPopulacaoElitista = [_*Valor|_],
 	Geracoes is G-1,
-	gera_geracao(Geracoes,NovaPopulacaoOrd).
+	write('Geracao '),write(Geracoes),write('  '), write(Valor), nl,
+	guardar_melhor_resultado(Valor),
+	gera_geracao(Geracoes,NovaPopulacaoElitista).
 
+
+guardar_melhor_resultado(Valor):-
+	\+ best_path(_), %se nao existir um melhor resultado
+	assertz(best_path(Valor)). %% entao estabelecer novo resultado
+
+guardar_melhor_resultado(Valor):-
+	best_path(Anterior), %% veriificar queal o resultado que existe no best path
+	Anterior > Valor, % so o novo  resultado for melhor
+	retractall(best_path(_)), % remover o anterior
+	assertz(best_path(Valor)). % adicionar esse novo resultado
+
+guardar_melhor_resultado(_).
+
+melhoresResultadosPopulacao(NumPopulacao,Pop,Res):-
+	findall(Elemento,(nth1(Index,Pop,Elemento), Index =< NumPopulacao),Res).
+%para cada elemento Index(Começa em 1) da lista Pop filtra a populacao mediante o numero da populacao
+%Obtendo assim apenas as melhores populacoes 
 
 
 cruzamento([],[]).
