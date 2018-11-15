@@ -24,11 +24,19 @@ play :-
 % Ask the color for the human player and start the game with it.
 playerMark:-
 	  repeat,
-	  nl, write('Color for human player ? (x or o)'), nl,
+	  nl, write('Symbol for human player ? (x or o)'), nl,
 	  read(Player), nl,
 	  (Player == o; Player == x),
-          EmptyBoard = [0, 0, 0, 0, 0, 0, 0, 0, 0],
-	  show(EmptyBoard), nl,
+          EmptyBoard = [[0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 'o', 'x', 0, 0, 0],
+                        [0, 0, 0, 'x', 'o', 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0]],
+    write('  -------------------------------'), nl,
+	  drawBoard(EmptyBoard), nl,
           play([x, play, EmptyBoard], Player).
 
 
@@ -41,7 +49,7 @@ play([Player, play, Board], Player) :- !,
     read(Pos), nl,                                  % Ask human where to play
     (
       humanMove([Player, play, Board], [NextPlayer, State, NextBoard], Pos), !,
-      show(NextBoard),
+      drawBoard(NextBoard),
       (
         State = win, !,                             % If Player win -> stop
         nl, write('End of game : '),
@@ -67,7 +75,7 @@ play([Player, play, Board], HumanPlayer) :-
     nl, write('Computer play : '), nl, nl,
     % Compute the best move
     bestMove([Player, play, Board], [NextPlayer, State, BestSuccBoard]),
-    show(BestSuccBoard),
+    drawBoard(BestSuccBoard),
     (
       State = win, !,                                 % If Player win -> stop
       nl, write('End of game : '),
@@ -112,20 +120,24 @@ set1(P, E, [X|Ls], [X|L2s]) :-
     set1(P1, E, Ls, L2s).
 
 
+drawBoard([]):-!.
+
+drawBoard([H|T]):-show(H),
+                  drawBoard(T).
+
 % show(+Board)
 % Show the board to current output.
-show([X1, X2, X3, X4, X5, X6, X7, X8, X9]) :-
-    write('   '), show2(X1),
+show([X1, X2, X3, X4, X5, X6, X7, X8]) :-
+    write(' | '), show2(X1),
     write(' | '), show2(X2),
-    write(' | '), show2(X3), nl,
-    write('  -----------'), nl,
-    write('   '), show2(X4),
+    write(' | '), show2(X3),
+    write(' | '), show2(X4),
     write(' | '), show2(X5),
-    write(' | '), show2(X6), nl,
-    write('  -----------'), nl,
-    write('   '), show2(X7),
+    write(' | '), show2(X6),
+    write(' | '), show2(X7),
     write(' | '), show2(X8),
-    write(' | '), show2(X9), nl.
+    write(' | '),nl,
+    write('  -------------------------------'), nl.
 
 
 
