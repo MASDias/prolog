@@ -1,5 +1,6 @@
 :- use_module(minimax).
 :- use_module(tictactoe).
+:- use_module(auxiliar).
 
 % bestMove(+Pos, -NextPos)
 % Compute the best Next Position from Position Pos
@@ -7,7 +8,7 @@
 bestMove(Pos, NextPos) :-
     minimax(Pos, NextPos, _).
 
-
+teste(B,Board,V):-pos(B, Board, V).
 % play
 % Start the game.
 play :-
@@ -46,7 +47,7 @@ playerMark:-
 % Ask to human what to do.
 play([Player, play, Board], Player) :- !,
     nl, write('Next move ?'), nl,
-    read(Pos), nl,                                  % Ask human where to play
+    readPos(Pos), nl,                                  % Ask human where to play
     (
       humanMove([Player, play, Board], [NextPlayer, State, NextBoard], Pos), !,
       drawBoard(NextBoard),
