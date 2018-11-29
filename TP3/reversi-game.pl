@@ -1,6 +1,7 @@
 :- use_module(minimax).
 :- use_module(tictactoe).
 :- use_module(auxiliar).
+:- use_module(reversi).
 
 % bestMove(+Pos, -NextPos)
 % Compute the best Next Position from Position Pos
