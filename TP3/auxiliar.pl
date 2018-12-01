@@ -1,17 +1,16 @@
-:- module(auxiliar,[readPos/1, pos/3, jogar/4, coordenadas/2, inBoard/2]).
+:- module(auxiliar,[readPos/1, pos/3, coordenadas/2, inBoard/2,substituir/5]).
+:- use_module(reversi).
 
-readPos(V):-
-    read(V),
-    V = (L,C).
+% readPos(V):-
+%     read(V),
+%     V = (L,C).
 
-pos((L, C), Board, V):-
+pos((L,C), Board, V):-
     nth1(L, Board, Linha),
     nth1(C, Linha, V).
 
-jogar((L, C), Board, NewBoard, E):-
-    pos((L,C), Board, 0),
-    %validar((L,C), Board, E)
-    substituir(Board, L, C, E, NewBoard).
+nextPlayer(o, x).
+nextPlayer(x, o).
 
 substituir(Board, L, C, E, NewBoard):-
     nth1(L, Board, List),
@@ -21,7 +20,6 @@ substituir(Board, L, C, E, NewBoard):-
 selectInsert(N, I, V, O):-
     nth1(N,I,_,T),
     nth1(N,O,V,T).
-
 
 coordenadas(1,2).
 coordenadas(2,3).

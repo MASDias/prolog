@@ -1,4 +1,4 @@
-:- module(reversi,[vizinho/3, direcao/4, validar/3]).
+:- module(reversi,[vizinho/3, direcao/4, validar/3,validar/4, jogar/4]).
 :- use_module(auxiliar).
 
 vizinho((L,C), Adversario, Board):- 
@@ -6,15 +6,27 @@ vizinho((L,C), Adversario, Board):-
     pos((LV,CV), Board, Adversario),
     !.
 
-% validar((L,C), Board, Player):-
-%     validar((L,C), Board,_),
-%     !.
-
-
-validar((L,C), Board,Direcao):-
-    pos((L,C), Board, Player),
-    direcao(Direcao, (L,C), ),
+validar((L,C), Board, Player):-
+    validar((L,C), Board,_),
     !.
+
+jogar((L, C), Board, NewBoard, Jogador):-
+    pos((L,C), Board, 0),
+    nextPlayer(Jogador,Adversario),
+    vizinho((L,C),Adversario,Board),
+    validar((L,C), Board, Jogador),
+    substituir(Board, L, C, Jogador, NewBoard).
+
+validar(Pos, Board, Jogador, Direcao):-
+    direcao(Direcao, Pos, LinhaIndex, ColunaIndex),  
+    (        
+        pos((LinhaIndex,ColunaIndex),Board,Jogador)
+        ;
+        validar((LinhaIndex,ColunaIndex), Board, Jogador, Direcao)
+    ).
+
+nextPlayer(o, x).
+nextPlayer(x, o).
 
 %Direcoes
 direcao(cima, (L,C), LSaida, C) :- coordenadas(LSaida, L).

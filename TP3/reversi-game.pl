@@ -116,8 +116,7 @@ play([Player, play, Board], Player2) :- !,
 
 % nextPlayer(X1, X2)
 % True if X2 is the next player to play after X1.
-nextPlayer(o, x).
-nextPlayer(x, o).
+
 
 % When human play
 
