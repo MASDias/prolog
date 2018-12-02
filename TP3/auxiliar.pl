@@ -1,9 +1,25 @@
-:- module(auxiliar,[readPos/1, pos/3, coordenadas/2, inBoard/2,substituir/5]).
+:- module(auxiliar,[contarPecas/3, readPos/1, pos/3, coordenadas/2, inBoard/2, substituir/5, nextPlayer/2]).
 :- use_module(reversi).
 
-% readPos(V):-
-%     read(V),
-%     V = (L,C).
+readPos(V):-
+    read(V),
+    V = (L,C).
+
+contarPecas(Player,Board,TotalPecas):-
+    flatten(Board, Lista),
+    contarPecasLista(Player,Lista,TotalPecas,0).
+
+
+contarPecasLista(_,[],T,T).
+
+contarPecasLista(Player,[H|T],TotalPecas,Contador):-
+    (
+        H = Player -> Contador1 is Contador + 1
+        ;
+        Contador1 is Contador
+    ),
+    contarPecasLista(Player,T,TotalPecas,Contador1).
+    
 
 pos((L,C), Board, V):-
     nth1(L, Board, Linha),

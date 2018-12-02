@@ -1,5 +1,5 @@
 :- use_module(minimax).
-:- use_module(tictactoe).
+% :- use_module(tictactoe).
 :- use_module(auxiliar).
 :- use_module(reversi).
 
@@ -47,10 +47,9 @@ playerMark:-
 % Ask to human what to do.
 play([Player, play, Board], Player) :- !,
     nl, write('Next move ?'), nl,
-    readPos(Pos),
-    jogar(Pos, Board, NextBoard, Player), nl,                                  % Ask human where to play
+    readPos(Pos),            % Ask human where to play
     (
-      %humanMove([Player, play, Board], [NextPlayer, State, NextBoard], Pos), !,
+      humanMove([Player, play, Board], [NextPlayer, State, NextBoard], Pos), !,
       drawBoard(NextBoard),
       (
         State = win, !,                             % If Player win -> stop
@@ -71,10 +70,9 @@ play([Player, play, Board], Player) :- !,
 
 play([Player, play, Board], Player2) :- !,
     nl, write('Next move ?'), nl,
-    readPos(Pos),
-    jogar(Pos, Board, NextBoard, Player), nl,                                  % Ask human where to play
+    readPos(Pos),% Ask human where to play
     (
-      %humanMove([Player, play, Board], [NextPlayer, State, NextBoard], Pos), !,
+      humanMove([Player, play, Board], [NextPlayer, State, NextBoard], Pos), !,
       drawBoard(NextBoard),
       (
         State = win, !,                             % If Player win -> stop
@@ -120,15 +118,30 @@ play([Player, play, Board], Player2) :- !,
 
 % When human play
 
-humanMove([X1, play, Board], [X2, State, NextBoard], Pos) :-
-    nextPlayer(X1, X2),
-    set1(Pos, X1, Board, NextBoard),
-    decide(X1,NextBoard,State).
+humanMove([Player, play, Board], [Adversario, State, NextBoard], Pos) :-
+    nextPlayer(Player, Adversario),
+    jogar(Pos, Board, NextBoard, Player), nl, 
+    decide(Player,NextBoard,State).
 
-decide(X,Board,win):-
-    winPos(X,Board),!.
-decide(X,Board,draw):-
-    drawPos(X,Board),!.
+% decide(X,Board,win):-
+%     winPos(X,Board),!.
+% decide(X,Board,draw):-
+%     drawPos(X,Board),!.
+% decide(_,_,play).
+
+decide(Jogador, Board, State) :-
+    contarPecas(0, Board, 0),
+    nextPlayer(Jogador, Adversario),
+    contarPecas(Jogador, Board, JogadorPecas),
+    contarPecas(Adversario, Board, AdversarioPecas),
+    (
+        JogadorPecas > AdversarioPecas, 
+        State = win
+        ; 
+        JogadorPecas =:= AdversarioPecas, 
+        State = draw
+    ),!.
+
 decide(_,_,play).
 
 
