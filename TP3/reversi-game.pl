@@ -1,13 +1,13 @@
-:- use_module(minimax).
+:- use_module(alphabeta).
 % :- use_module(tictactoe).
 :- use_module(auxiliar).
 :- use_module(reversi).
-
+:- dynamic(ai/1).
 % bestMove(+Pos, -NextPos)
 % Compute the best Next Position from Position Pos
 % with minimax or alpha-beta algorithm.
-bestMove(Pos, NextPos) :-
-    minimax(Pos, NextPos, _).
+% bestMove(Pos, NextPos) :-
+%     minimax(Pos, NextPos, _).
 
 % play
 % Start the game.
@@ -17,9 +17,23 @@ play :-
     write('=      Reversi     ='), nl,
     write('===================='), nl, nl,
     write('Rem : x starts the game'), nl,
+    chooseAI,
     playerMark.
 
-
+chooseAI:-
+    repeat,
+    nl,
+    retractall(ai/1),
+    write('Decide what algorithm to use:'),nl,
+    % write('1] Minimax'),nl,
+    write('1] alpha-beta'),nl,
+    read(AI),nl,
+    (AI == 1,
+    assert(ai(alfabeta))
+    % ;
+    % AI == 2,
+    % assert(ai(minimax))
+    ).
 
 % playAskColor
 % Ask the color for the human player and start the game with it.
@@ -68,49 +82,59 @@ play([Player, play, Board], Player) :- !,
     ).
 
 
-play([Player, play, Board], Player2) :- !,
-    nl, write('Next move ?'), nl,
-    readPos(Pos),% Ask human where to play
-    (
-      humanMove([Player, play, Board], [NextPlayer, State, NextBoard], Pos), !,
-      drawBoard(NextBoard),
-      (
-        State = win, !,                             % If Player win -> stop
-        nl, write('End of game : '),
-        write(Player), write(' win !'), nl, nl
-        ;
-        State = draw, !,                            % If draw -> stop
-        nl, write('End of game : '),
-        write(' draw !'), nl, nl
-        ;
-        play([NextPlayer, play, NextBoard], Player2) % Else -> continue the game
-      )
-      ;
-      write('-> Bad Move !'), nl,                % If humanMove fail -> bad move
-      play([Player, play, Board], Player)        % Ask again
-    ).
-
-% play(+Position, +HumanPlayer)
-% If it is not human who must play -> Computer must play
-% Compute the best move for computer with minimax or alpha-beta.
-% play([Player, play, Board], HumanPlayer) :-
-%     nl, write('Computer play : '), nl, nl,
-%     % Compute the best move
-%     bestMove([Player, play, Board], [NextPlayer, State, BestSuccBoard]),
-%     drawBoard(BestSuccBoard),
+% play([Player, play, Board], Player2) :- !,
+%     nl, write('Next move ?'), nl,
+%     readPos(Pos),% Ask human where to play
 %     (
-%       State = win, !,                                 % If Player win -> stop
-%       nl, write('End of game : '),
-%       write(Player), write(' win !'), nl, nl
+%       humanMove([Player, play, Board], [NextPlayer, State, NextBoard], Pos), !,
+%       drawBoard(NextBoard),
+%       (
+%         State = win, !,                             % If Player win -> stop
+%         nl, write('End of game : '),
+%         write(Player), write(' win !'), nl, nl
+%         ;
+%         State = draw, !,                            % If draw -> stop
+%         nl, write('End of game : '),
+%         write(' draw !'), nl, nl
+%         ;
+%         play([NextPlayer, play, NextBoard], Player2) % Else -> continue the game
+%       )
 %       ;
-%       State = draw, !,                                % If draw -> stop
-%       nl, write('End of game : '), write(' draw !'), nl, nl
-%       ;
-%       % Else -> continue the game
-%       play([NextPlayer, play, BestSuccBoard], HumanPlayer)
+%       write('-> Bad Move !'), nl,                % If humanMove fail -> bad move
+%       play([Player, play, Board], Player)        % Ask again
 %     ).
 
+play([Player, State, Board], HumanPlayer) :-
+    nl, write('Computer play : '), nl, nl,
+    (% Compute the best move
+        % hasMoves(Player,Board),
+        bestMove([Player, State, Board], [NextPlayer, NextState, BestSuccBoard]),
+        % showBoard(BestSuccBoard),
+        (
+          decide(Player,NextState,BestSuccBoard)
+          ;
+          % Else -> continue the game
+          play([NextPlayer, play, BestSuccBoard], HumanPlayer)
+        )
+        ;
+        State==play,
+        write('End of game : '), write(' No more moves !'), nl,nl
+        ;
+        nextPlayer(Player,OtherPlayer),
+        play([OtherPlayer, play, Board], HumanPlayer)
+    )
+    .
 
+bestMove([Player,State,Board],NextPos):-
+    % ai(AI),
+    Pos=[Player,State,Board],
+    (
+        % AI==minimax,
+        % minimax(Pos,NextPos,_,Depth)
+        % ;
+        alphabeta(Pos,NextPos,_)
+    )
+    .
 
 % nextPlayer(X1, X2)
 % True if X2 is the next player to play after X1.
@@ -129,20 +153,20 @@ humanMove([Player, play, Board], [Adversario, State, NextBoard], Pos) :-
 %     drawPos(X,Board),!.
 % decide(_,_,play).
 
-decide(Jogador, Board, State) :-
-    contarPecas(0, Board, 0),
-    nextPlayer(Jogador, Adversario),
-    contarPecas(Jogador, Board, JogadorPecas),
-    contarPecas(Adversario, Board, AdversarioPecas),
-    (
-        JogadorPecas > AdversarioPecas, 
-        State = win
-        ; 
-        JogadorPecas =:= AdversarioPecas, 
-        State = draw
-    ),!.
+% decide(Jogador, Board, State) :-
+%     contarPecas(0, Board, 0),
+%     nextPlayer(Jogador, Adversario),
+%     contarPecas(Jogador, Board, JogadorPecas),
+%     contarPecas(Adversario, Board, AdversarioPecas),
+%     (
+%         JogadorPecas > AdversarioPecas, 
+%         State = win
+%         ; 
+%         JogadorPecas =:= AdversarioPecas, 
+%         State = draw
+%     ),!.
 
-decide(_,_,play).
+% decide(_,_,play).
 
 
 % set1(+Elem, +Pos, +List, -ResList).

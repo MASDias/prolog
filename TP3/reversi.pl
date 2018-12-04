@@ -1,11 +1,8 @@
 :- module(reversi,[vizinho/3, direcao/4, validar/3, jogar/4]).
 :- use_module(auxiliar).
 
-
 colunas(8).
 linhas(8).
-nextPlayer(o, x).
-nextPlayer(x, o).
 
 vizinho((L,C), Adversario, Board):- 
     direcao(_, (L,C), LV, CV),
@@ -19,8 +16,8 @@ dentroBoard((L,C)):-
         C > 0 , L =<MaxColunas.
 
 jogar((L, C), Board, NewBoard, Jogador):-
-    jogadaValida((L,C), Jogador, Board),
-    propagarJogada((L,C), Jogador, Board, NewBoard).
+    jogadaValida((L,C), Jogador, Board), %verificar se jogada e valida
+    propagarJogada((L,C), Jogador, Board, NewBoard). %atualizar board
 
 jogadaValida((L,C), Jogador, Board):-
     jogadasPossiveis(Jogador,Board,ListaJogadasValidas),

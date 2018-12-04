@@ -1,16 +1,17 @@
-:- module(auxiliar,[contarPecas/3, readPos/1, pos/3, coordenadas/2, inBoard/2, substituir/5, nextPlayer/2]).
+:- module(auxiliar,[decide/3, min_to_move/1, max_to_move/1, jogadasComHeuristica/2, contarPecas/3, readPos/1, pos/3, coordenadas/2, inBoard/2, substituir/5, nextPlayer/2,decide/3]).
 :- use_module(reversi).
 
+nextPlayer(o, x).
+nextPlayer(x, o).
+
 readPos(V):-
-    read(V),
-    V = (L,C).
+    read(V).
 
 contarPecas(Player,Board,TotalPecas):-
     flatten(Board, Lista),
     contarPecasLista(Player,Lista,TotalPecas,0).
 
-
-contarPecasLista(_,[],T,T).
+contarPecasLista(_,[],TotalPecas,TotalPecas).
 
 contarPecasLista(Player,[H|T],TotalPecas,Contador):-
     (
@@ -25,8 +26,9 @@ pos((L,C), Board, V):-
     nth1(L, Board, Linha),
     nth1(C, Linha, V).
 
-nextPlayer(o, x).
-nextPlayer(x, o).
+temJogadaPossivel(Jogador,Board):-
+    pos(Pos,Board,0),
+    validar(Pos, Jogador, Board). 
 
 substituir(Board, L, C, E, NewBoard):-
     nth1(L, Board, List),
@@ -36,6 +38,76 @@ substituir(Board, L, C, E, NewBoard):-
 selectInsert(N, I, V, O):-
     nth1(N,I,_,T),
     nth1(N,O,V,T).
+
+%da as jogadas com os estados possiveis (ganhar, empatar, perder, play)
+jogadasComHeuristica(Pos,ListaJogadas):-
+    findall(Jogada, 
+                jogadaHeuristica(Pos,Jogada),
+            ListaJogadas).
+
+jogadaHeuristica([Jogador, _, Board], [Adversario, State, NewBoard]):-
+    nextPlayer(Jogador,Adversario),
+    jogar(_,Board,NewBoard,Jogador),
+    decide(Jogador,NewBoard,State).
+
+ganhar(Jogador,Board,State):-
+    nextPlayer(Jogador, Adversario),
+    (
+        contarPecas(0, Board, 0)
+        ;
+        \+ temJogadaPossivel(Jogador,Board),  
+        \+ temJogadaPossivel(Adversario,Board)  
+    ),
+    contarPecas(Jogador, Board, JogadorPecas),
+    contarPecas(Adversario, Board, AdversarioPecas),
+    JogadorPecas > AdversarioPecas, 
+    State = win.
+    
+empatar(Jogador,Board,State):-
+    nextPlayer(Jogador, Adversario),
+    (
+        contarPecas(0, Board, 0)
+        ;
+        \+ temJogadaPossivel(Jogador,Board),  
+        \+ temJogadaPossivel(Adversario,Board)  
+    ),
+    contarPecas(Jogador, Board, JogadorPecas),
+    contarPecas(Adversario, Board, AdversarioPecas),
+    JogadorPecas =:= AdversarioPecas, 
+    State = draw.
+
+perder(Jogador,Board,State):-
+    nextPlayer(Jogador, Adversario),
+    (
+        contarPecas(0, Board, 0)
+        ;
+        \+ temJogadaPossivel(Jogador,Board),  
+        \+ temJogadaPossivel(Adversario,Board)
+    ),
+    contarPecas(Jogador, Board, JogadorPecas),
+    contarPecas(Adversario, Board, AdversarioPecas),
+    JogadorPecas < AdversarioPecas, 
+    State = lose.
+
+decide(Jogador, Board, State) :-
+    (
+        % perder(Jogador,Board,State)
+        % ;
+        ganhar(Jogador,Board,State)
+        ; 
+        empatar(Jogador,Board,State)
+    ),!.
+
+decide(_,_,play).
+
+
+% min_to_move(+Pos)
+% True if the next player to play is the MIN player.
+min_to_move([o, _, _]).
+
+% max_to_move(+Pos)
+% True if the next player to play is the MAX player.
+max_to_move([x, _, _]).
 
 coordenadas(1,2).
 coordenadas(2,3).
