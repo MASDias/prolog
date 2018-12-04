@@ -74,7 +74,7 @@ play([Player, play, Board], Player) :- !,
         nl, write('End of game : '),
         write(' draw !'), nl, nl
         ;
-        play([NextPlayer, play, NextBoard], Player) % Else -> continue the game
+        play([NextPlayer, State, NextBoard], Player) % Else -> continue the game
       )
       ;
       write('-> Bad Move !'), nl,                % If humanMove fail -> bad move
@@ -110,16 +110,13 @@ play([Player, State, Board], HumanPlayer) :-
         % hasMoves(Player,Board),
         bestMove([Player, State, Board], [NextPlayer, NextState, BestSuccBoard]),
         % showBoard(BestSuccBoard),
+        drawBoard(BestSuccBoard),
         (
           decide(Player,NextState,BestSuccBoard)
           ;
           % Else -> continue the game
           play([NextPlayer, play, BestSuccBoard], HumanPlayer)
-        )
-        ;
-        State==play,
-        write('End of game : '), write(' No more moves !'), nl,nl
-        ;
+        ),
         nextPlayer(Player,OtherPlayer),
         play([OtherPlayer, play, Board], HumanPlayer)
     )
