@@ -16,20 +16,19 @@ dentroBoard((L,C)):-
         C > 0 , L =<MaxColunas.
 
 jogar((L, C), Board, NewBoard, Jogador):-
-    jogadaValida((L,C), Jogador, Board), %verificar se jogada e valida
-    propagarJogada((L,C), Jogador, Board, NewBoard). %atualizar board
+    jogadaValida((L,C), Jogador, Board,NewBoard). %verificar se jogada e valida
+   
 
-jogadaValida((L,C), Jogador, Board):-
+jogadaValida((L,C), Jogador, Board, NewBoard):-
     jogadasPossiveis(Jogador,Board,ListaJogadasValidas),
-    member((L,C),ListaJogadasValidas).
+    member((L,C),ListaJogadasValidas),
+    propagarJogada((L,C), Jogador, Board, NewBoard). %atualizar board.
 
 jogadasPossiveis(Jogador,Board,ListaJogadas):-
-    nextPlayer(Jogador,Adversario),
     findall(
             (L,C),
             (   
                 pos((L,C),Board,0),
-                vizinho((L,C),Adversario,Board),
                 validar((L,C),Jogador,Board)
             ),
             ListaJogadas

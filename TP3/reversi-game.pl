@@ -61,6 +61,7 @@ playerMark:-
 % Ask to human what to do.
 play([Player, play, Board], Player) :- !,
     nl, write('Next move ?'), nl,
+    
     readPos(Pos),            % Ask human where to play
     (
       humanMove([Player, play, Board], [NextPlayer, State, NextBoard], Pos), !,
@@ -80,29 +81,6 @@ play([Player, play, Board], Player) :- !,
       write('-> Bad Move !'), nl,                % If humanMove fail -> bad move
       play([Player, play, Board], Player)        % Ask again
     ).
-
-
-% play([Player, play, Board], Player2) :- !,
-%     nl, write('Next move ?'), nl,
-%     readPos(Pos),% Ask human where to play
-%     (
-%       humanMove([Player, play, Board], [NextPlayer, State, NextBoard], Pos), !,
-%       drawBoard(NextBoard),
-%       (
-%         State = win, !,                             % If Player win -> stop
-%         nl, write('End of game : '),
-%         write(Player), write(' win !'), nl, nl
-%         ;
-%         State = draw, !,                            % If draw -> stop
-%         nl, write('End of game : '),
-%         write(' draw !'), nl, nl
-%         ;
-%         play([NextPlayer, play, NextBoard], Player2) % Else -> continue the game
-%       )
-%       ;
-%       write('-> Bad Move !'), nl,                % If humanMove fail -> bad move
-%       play([Player, play, Board], Player)        % Ask again
-%     ).
 
 play([Player, State, Board], HumanPlayer) :-
     nl, write('Computer play : '), nl, nl,
@@ -144,44 +122,12 @@ humanMove([Player, play, Board], [Adversario, State, NextBoard], Pos) :-
     jogar(Pos, Board, NextBoard, Player), nl, 
     decide(Player,NextBoard,State).
 
-% decide(X,Board,win):-
-%     winPos(X,Board),!.
-% decide(X,Board,draw):-
-%     drawPos(X,Board),!.
-% decide(_,_,play).
-
-% decide(Jogador, Board, State) :-
-%     contarPecas(0, Board, 0),
-%     nextPlayer(Jogador, Adversario),
-%     contarPecas(Jogador, Board, JogadorPecas),
-%     contarPecas(Adversario, Board, AdversarioPecas),
-%     (
-%         JogadorPecas > AdversarioPecas, 
-%         State = win
-%         ; 
-%         JogadorPecas =:= AdversarioPecas, 
-%         State = draw
-%     ),!.
-
-% decide(_,_,play).
-
-
-% set1(+Elem, +Pos, +List, -ResList).
-% Set Elem at Position Pos in List => Result in ResList.
-% Rem : counting starts at 1.
-set1(1, E, [X|Ls], [E|Ls]) :- !, X = 0.
-
-set1(P, E, [X|Ls], [X|L2s]) :-
-    number(P),
-    P1 is P - 1,
-    set1(P1, E, Ls, L2s).
-
-
 drawBoard([]):-!.
 
-drawBoard([H|T]):-show(H),
+drawBoard([H|T]):- show(H),
                   drawBoard(T).
 
+                
 % show(+Board)
 % Show the board to current output.
 show([X1, X2, X3, X4, X5, X6, X7, X8]) :-
