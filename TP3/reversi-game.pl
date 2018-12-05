@@ -42,8 +42,7 @@ playerMark:-
 	  nl, write('Symbol for human player ? (x or o)'), nl,
 	  read(Player), nl,
       (Player == o; Player == x),
-      write('    1   2   3   4   5   6   7   8'), nl,
-          EmptyBoard = [[0, 0, 0, 0, 0, 0, 0, 0],
+          EmptyBoard = [[0, 0, 0, 0, 0, 0, 0, 0], 
                         [0, 0, 0, 0, 0, 0, 0, 0],
                         [0, 0, 0, 0, 0, 0, 0, 0],
                         [0, 0, 0, 'o', 'x', 0, 0, 0],
@@ -51,8 +50,8 @@ playerMark:-
                         [0, 0, 0, 0, 0, 0, 0, 0],
                         [0, 0, 0, 0, 0, 0, 0, 0],
                         [0, 0, 0, 0, 0, 0, 0, 0]],
-    write('   -------------------------------'), nl,
-	  drawBoard(EmptyBoard, 1), nl,
+    
+	  drawBoard(EmptyBoard), nl,
           play([x, play, EmptyBoard], Player).
 
 
@@ -68,7 +67,8 @@ play([Player, play, Board], Player) :- !,
             semJogada(Player,Board,NoMovesState),
             NoMovesState = nomoves, !,                            % If draw -> stop
             nl, write('No moves, pass the play'),
-            play([NextPlayer, State, NextBoard], Player)
+            nextPlayer(Player,NextPlayer),
+            play([NextPlayer, play, Board], Player)
         )
         ;
         (
@@ -97,7 +97,8 @@ play([Player, State, Board], HumanPlayer) :-
             semJogada(Player,Board,NoMovesState),
             NoMovesState = nomoves, !,                            % If draw -> stop
             nl, write('No moves, the computer pass the play'),
-            play([NextPlayer, State, NextBoard], Player)
+            nextPlayer(Player,NextPlayer),
+            play([NextPlayer, play, Board], Player)
         )
         ;
         (
@@ -136,6 +137,16 @@ humanMove([Player, play, Board], [Adversario, State, NextBoard], Pos) :-
     nextPlayer(Player, Adversario),
     jogar(Pos, Board, NextBoard, Player), nl, 
     decide(Player,NextBoard,State).
+
+
+drawBoard(Board):-
+    write('    1   2   3   4   5   6   7   8'), nl,
+    write('   -------------------------------'), nl,
+    drawBoard(Board,1).
+
+
+
+
 
 drawBoard([], _):-!.
 
