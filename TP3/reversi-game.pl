@@ -61,43 +61,57 @@ playerMark:-
 % Ask to human what to do.
 play([Player, play, Board], Player) :- !,
     nl, write('Next move ?'), nl,
-    
     readPos(Pos),            % Ask human where to play
     (
-      humanMove([Player, play, Board], [NextPlayer, State, NextBoard], Pos), !,
-      drawBoard(NextBoard),
-      (
-        State = win, !,                             % If Player win -> stop
-        nl, write('End of game : '),
-        write(Player), write(' win !'), nl, nl
+        (
+            semJogada(Player,Board,NoMovesState),
+            NoMovesState = nomoves, !,                            % If draw -> stop
+            nl, write('No moves, pass the play'),
+            play([NextPlayer, State, NextBoard], Player)
+        )
         ;
-        State = draw, !,                            % If draw -> stop
-        nl, write('End of game : '),
-        write(' draw !'), nl, nl
-        ;
-        play([NextPlayer, State, NextBoard], Player) % Else -> continue the game
-      )
-      ;
-      write('-> Bad Move !'), nl,                % If humanMove fail -> bad move
-      play([Player, play, Board], Player)        % Ask again
+        (
+            humanMove([Player, play, Board], [NextPlayer, State, NextBoard], Pos), !,
+            drawBoard(NextBoard),
+            (
+                State = win, !,                             % If Player win -> stop
+                nl, write('End of game : '),
+                write(Player), write(' win !'), nl, nl
+                ;
+                State = draw, !,                            % If draw -> stop
+                nl, write('End of game : '),
+                write(' draw !'), nl, nl
+                ;
+                play([NextPlayer, State, NextBoard], Player) % Else -> continue the game
+            )
+            ;
+            write('-> Bad Move !'), nl,                % If humanMove fail -> bad move
+            play([Player, play, Board], Player)
+        )        % Ask again
     ).
 
 play([Player, State, Board], HumanPlayer) :-
     nl, write('Computer play : '), nl, nl,
-    (% Compute the best move
-        % hasMoves(Player,Board),
-        bestMove([Player, State, Board], [NextPlayer, NextState, BestSuccBoard]),
-        % showBoard(BestSuccBoard),
-        drawBoard(BestSuccBoard),
         (
-          decide(Player,NextState,BestSuccBoard)
-          ;
-          % Else -> continue the game
-          play([NextPlayer, play, BestSuccBoard], HumanPlayer)
-        ),
-        nextPlayer(Player,OtherPlayer),
-        play([OtherPlayer, play, Board], HumanPlayer)
-    )
+            semJogada(Player,Board,NoMovesState),
+            NoMovesState = nomoves, !,                            % If draw -> stop
+            nl, write('No moves, the computer pass the play'),
+            play([NextPlayer, State, NextBoard], Player)
+        )
+        ;
+        (
+            % Compute the best move
+            bestMove([Player, State, Board], [NextPlayer, NextState, BestSuccBoard]),
+            drawBoard(BestSuccBoard),
+            (
+            decide(Player,NextState,BestSuccBoard)
+            ;
+            % Else -> continue the game
+            play([NextPlayer, play, BestSuccBoard], HumanPlayer)
+            ),
+            nextPlayer(Player,OtherPlayer),
+            play([OtherPlayer, play, Board], HumanPlayer)
+        )
     .
 
 bestMove([Player,State,Board],NextPos):-

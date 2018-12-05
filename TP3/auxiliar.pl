@@ -1,4 +1,4 @@
-:- module(auxiliar,[decide/3, min_to_move/1, max_to_move/1, jogadasComHeuristica/2, contarPecas/3, readPos/1, pos/3, coordenadas/2, inBoard/2, substituir/5, nextPlayer/2,decide/3]).
+:- module(auxiliar,[semJogada/3, decide/3, min_to_move/1, max_to_move/1, jogadasComHeuristica/2, contarPecas/3, readPos/1, pos/3, coordenadas/2, inBoard/2, substituir/5, nextPlayer/2,decide/3]).
 :- use_module(reversi).
 
 nextPlayer(o, x).
@@ -89,13 +89,17 @@ perder(Jogador,Board,State):-
     JogadorPecas < AdversarioPecas, 
     State = lose.
 
+semJogada(Jogador,Board,State):-
+    \+ temJogadaPossivel(Jogador,Board),  
+    State = nomoves.
+
 decide(Jogador, Board, State) :-
     (
-        % perder(Jogador,Board,State)
-        % ;
         ganhar(Jogador,Board,State)
         ; 
         empatar(Jogador,Board,State)
+        ;
+        semJogada(Jogador,Board,State)
     ),!.
 
 decide(_,_,play).

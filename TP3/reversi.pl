@@ -43,7 +43,7 @@ propagarJogada(Pos, Jogador, Board, NewBoard):- %%necessario mudar as pecas em t
     mudarPecas(Pos,Jogador,Adversario,TempBoard4,TempBoard5,cima_direita),
     mudarPecas(Pos,Jogador,Adversario,TempBoard5,TempBoard6,cima_esquerda),
     mudarPecas(Pos,Jogador,Adversario,TempBoard6,TempBoard7,baixo_direita),
-    mudarPecas(Pos,Jogador,Adversario,TempBoard7,NewBoard,baixo_esquerda).
+    mudarPecas(Pos,Jogador,Adversario,TempBoard7,NewBoard,baixo_esquerda),!.
 
 mudarPecas((L,C),Jogador,Adversario,Board,NewBoard,Direcao):-
     substituir(Board, L, C, Jogador, NewBoard1),
