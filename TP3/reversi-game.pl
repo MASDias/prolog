@@ -41,7 +41,8 @@ playerMark:-
 	  repeat,
 	  nl, write('Symbol for human player ? (x or o)'), nl,
 	  read(Player), nl,
-	  (Player == o; Player == x),
+      (Player == o; Player == x),
+      write('    1   2   3   4   5   6   7   8'), nl,
           EmptyBoard = [[0, 0, 0, 0, 0, 0, 0, 0],
                         [0, 0, 0, 0, 0, 0, 0, 0],
                         [0, 0, 0, 0, 0, 0, 0, 0],
@@ -50,8 +51,8 @@ playerMark:-
                         [0, 0, 0, 0, 0, 0, 0, 0],
                         [0, 0, 0, 0, 0, 0, 0, 0],
                         [0, 0, 0, 0, 0, 0, 0, 0]],
-    write('  -------------------------------'), nl,
-	  drawBoard(EmptyBoard), nl,
+    write('   -------------------------------'), nl,
+	  drawBoard(EmptyBoard, 1), nl,
           play([x, play, EmptyBoard], Player).
 
 
@@ -136,10 +137,13 @@ humanMove([Player, play, Board], [Adversario, State, NextBoard], Pos) :-
     jogar(Pos, Board, NextBoard, Player), nl, 
     decide(Player,NextBoard,State).
 
-drawBoard([]):-!.
+drawBoard([], _):-!.
 
-drawBoard([H|T]):- show(H),
-                  drawBoard(T).
+drawBoard([H|T], Counter):- 
+    write(Counter),
+    C is Counter + 1,
+    show(H),
+    drawBoard(T, C).
 
                 
 % show(+Board)
@@ -154,7 +158,7 @@ show([X1, X2, X3, X4, X5, X6, X7, X8]) :-
     write(' | '), show2(X7),
     write(' | '), show2(X8),
     write(' | '),nl,
-    write('  -------------------------------'), nl.
+    write('   -------------------------------'), nl.
 
 
 
