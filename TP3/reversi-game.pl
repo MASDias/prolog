@@ -61,11 +61,21 @@ play([Player, play, Board], Player) :- !,
     readPos(Pos),            % Ask human where to play
     (
         (
-            semJogada(Player,Board,NoMovesState),
-            NoMovesState = nomoves, !,                            % If draw -> stop
-            nl, write('No moves, pass the play'),
-            nextPlayer(Player,NextPlayer),
-            play([NextPlayer, play, Board], Player)
+            decide(Player,Board,State),                    
+            (
+                State=nomoves,
+                nl, write('No moves, pass the play'),
+                nextPlayer(Player,NextPlayer),
+                play([NextPlayer, play, Board], Player)
+                ;
+                State = win, !,                             % If Player win -> stop
+                nl, write('End of game : '),
+                write(Player), write(' win !'), nl, nl
+                ;
+                State = draw, !,                            % If draw -> stop
+                nl, write('End of game : '),
+                write(' draw !'), nl, nl
+            )
         )
         ;
         (
@@ -91,11 +101,21 @@ play([Player, play, Board], Player) :- !,
 play([Player, State, Board], HumanPlayer) :-
     nl, write('Computer play : '), nl, nl,
         (
-            semJogada(Player,Board,NoMovesState),
-            NoMovesState = nomoves, !,                            % If draw -> stop
-            nl, write('No moves, the computer pass the play'),
-            nextPlayer(Player,NextPlayer),
-            play([NextPlayer, play, Board], Player)
+            decide(Player,Board,State),                    
+            (
+                State=nomoves,
+                nl, write('No moves, computer pass the play'),
+                nextPlayer(Player,NextPlayer),
+                play([NextPlayer, play, Board], Player)
+                ;
+                State = win, !,                             % If Player win -> stop
+                nl, write('End of game : '),
+                write(Player), write(' win !'), nl, nl
+                ;
+                State = draw, !,                            % If draw -> stop
+                nl, write('End of game : '),
+                write(' draw !'), nl, nl
+            )
         )
         ;
         (
