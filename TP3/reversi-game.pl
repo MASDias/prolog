@@ -1,13 +1,8 @@
 :- use_module(alphabeta).
-% :- use_module(tictactoe).
 :- use_module(auxiliar).
 :- use_module(reversi).
+:- use_module(minimax).
 :- dynamic(ai/1).
-% bestMove(+Pos, -NextPos)
-% Compute the best Next Position from Position Pos
-% with minimax or alpha-beta algorithm.
-% bestMove(Pos, NextPos) :-
-%     minimax(Pos, NextPos, _).
 
 % play
 % Start the game.
@@ -27,12 +22,14 @@ chooseAI:-
     write('Decide what algorithm to use:'),nl,
     % write('1] Minimax'),nl,
     write('1] alpha-beta'),nl,
+    write('2] minimax'),nl,
     read(AI),nl,
-    (AI == 1,
-    assert(ai(alfabeta))
-    % ;
-    % AI == 2,
-    % assert(ai(minimax))
+    (   
+        AI == 1,
+        assert(ai(alphabeta))
+        ;
+        AI == 2,
+        assert(ai(minimax))
     ).
 
 % playAskColor
@@ -117,12 +114,13 @@ play([Player, State, Board], HumanPlayer) :-
     .
 
 bestMove([Player,State,Board],NextPos):-
-    % ai(AI),
+    ai(AI),
     Pos=[Player,State,Board],
     (
-        % AI==minimax,
-        % minimax(Pos,NextPos,_,Depth)
-        % ;
+        AI==minimax,
+        minimax(Pos,NextPos,_)
+        ;
+        AI==alphabeta,
         alphabeta(Pos,NextPos,_)
     )
     .
@@ -143,10 +141,6 @@ drawBoard(Board):-
     write('    1   2   3   4   5   6   7   8'), nl,
     write('   -------------------------------'), nl,
     drawBoard(Board,1).
-
-
-
-
 
 drawBoard([], _):-!.
 

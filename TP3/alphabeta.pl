@@ -2,7 +2,9 @@
 :- use_module(auxiliar).
 :- use_module(reversi).
 :- use_module(alphabeta).
+
 %minMax com cortes alfa beta
+
 profundidade(2).
 
 alpha_limit(-1000).
